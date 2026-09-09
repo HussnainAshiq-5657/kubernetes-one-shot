@@ -1,261 +1,763 @@
-# Kubernetes in One Shot
+# ☸️ Kubernetes in One Shot
 
-This README is a comprehensive guide for "Kubernetes in One Shot." It contains categorized commands from your history, structured by core Kubernetes topics. Each command is briefly described for ease of understanding and use.
+A **beginner-to-advanced Kubernetes learning repository** containing essential Kubernetes concepts, practical commands, YAML manifests, deployment examples, troubleshooting techniques, and cloud-native tools.
 
----
+This repository is designed as a **one-shot Kubernetes reference** for DevOps learners who want to learn Kubernetes practically and use it in real-world projects.
 
-## **Core Concepts**
+### 🚀 Resources
 
-### Monolithic vs Microservices, Kubernetes Architecture
-
-1. `kubectl cluster-info`  
-   Display cluster information to understand the Kubernetes architecture.
-
-### Setup On Local/AWS EC2
-
-1. `kind create cluster --name=tws-cluster --config=config.yml`  
-   Create a Kubernetes cluster using Kind with a specific configuration.
-2. `kubectl config use-context kind-tws-cluster`  
-   Switch the context to the Kind cluster.
-
-### Kubectl and Pods
-
-1. `kubectl get nodes`  
-   List all nodes in the Kubernetes cluster.
-2. `kubectl run nginx --image=nginx -n nginx`  
-   Create a pod named nginx in the nginx namespace.
-3. `kubectl describe pod nginx -n nginx`  
-   Display detailed information about the nginx pod.
-
-### Namespaces, Labels, Selectors, Annotations
-
-1. `kubectl create namespace monitoring`  
-   Create a namespace for monitoring resources.
-2. `kubectl get namespace`  
-   List all namespaces in the cluster.
-3. `kubectl label namespace monitoring team=devops`  
-   Add a label to the monitoring namespace.
-4. `kubectl describe namespace monitoring`  
-   Display detailed information about the monitoring namespace.
+<p align="left">
+  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=helm&logoColor=white" />
+  <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white" />
+  <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" />
+  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" />
+</p>
 
 ---
 
-## **Workloads**
+## 📚 Table of Contents
 
-### Deployments
-
-1. `kubectl apply -f deployment.yml`  
-   Deploy a workload defined in `deployment.yml`.
-2. `kubectl scale deployment nginx-deployment --replicas=3 -n nginx`  
-   Scale the deployment to 3 replicas.
-
-### StatefulSets
-
-1. `kubectl apply -f statefulset.yml`  
-   Deploy a StatefulSet defined in `statefulset.yml`.
-2. `kubectl describe statefulset mysql -n database`  
-   Display detailed information about a StatefulSet.
-
-### DaemonSets
-
-1. `kubectl apply -f daemonset.yml`  
-   Deploy a DaemonSet for running pods on every node.
-2. `kubectl describe daemonset fluentd -n logging`  
-   Display details about a DaemonSet.
-
-### ReplicaSets
-
-1. `kubectl apply -f replicaset.yml`  
-   Deploy a ReplicaSet for managing pod replicas.
-2. `kubectl describe replicaset nginx-replicaset -n nginx`  
-   Show detailed information about the ReplicaSet.
-
-### Jobs and CronJobs
-
-1. `kubectl apply -f job.yml`  
-   Deploy a Job defined in `job.yml`.
-2. `kubectl apply -f cronjob.yml`  
-   Deploy a CronJob to schedule recurring tasks.
+* [What is Kubernetes?](#-what-is-kubernetes)
+* [Kubernetes Architecture](#-kubernetes-architecture)
+* [Cluster Setup](#-cluster-setup)
+* [Kubectl Commands](#-kubectl-commands)
+* [Namespaces](#-namespaces)
+* [Workloads](#-workloads)
+* [Networking](#-networking)
+* [Storage](#-storage)
+* [Configuration](#-configuration)
+* [Scaling & Scheduling](#-scaling--scheduling)
+* [RBAC & Security](#-rbac--security)
+* [Monitoring & Logging](#-monitoring--logging)
+* [Helm](#-helm)
+* [Advanced Kubernetes](#-advanced-kubernetes)
+* [Cloud Kubernetes](#-cloud-kubernetes)
+* [Troubleshooting](#-troubleshooting)
+* [Projects](#-projects)
+* [Learning Path](#-learning-path)
 
 ---
 
-## **Networking**
+# ☸️ What is Kubernetes?
 
-### Cluster Networking
+**Kubernetes (K8s)** is an open-source container orchestration platform used to automate:
 
-1. `kubectl get svc -A`  
-   List all services in the cluster.
+* 🚀 Container deployment
+* 📈 Application scaling
+* 🔄 Rolling updates
+* 🔧 Self-healing
+* 🌐 Service discovery
+* ⚖️ Load balancing
+* 🔐 Configuration & secrets management
+* 💾 Persistent storage
 
-### Services
-
-1. `kubectl apply -f service.yml`  
-   Expose an application as a service.
-2. `kubectl describe svc nginx-service -n nginx`  
-   Show details of the nginx service.
-
-### Ingress
-
-1. `kubectl apply -f ingress.yml`  
-   Configure an Ingress resource for routing traffic.
-2. `kubectl describe ingress nginx-ingress -n nginx`  
-   Display details about an Ingress resource.
-
-### Network Policies
-
-1. `kubectl apply -f networkpolicy.yml`  
-   Apply network restrictions between pods and services.
+Kubernetes is widely used in modern **DevOps, Cloud and Microservices environments**.
 
 ---
 
-## **Storage**
+# 🏗️ Kubernetes Architecture
 
-### Persistent Volumes (PV), Persistent Volume Claims (PVC)
+A Kubernetes cluster consists mainly of:
 
-1. `kubectl apply -f persistentVolume.yml`  
-   Create a PersistentVolume.
-2. `kubectl apply -f persistentVolumeClaim.yml`  
-   Request storage through a PersistentVolumeClaim.
+### Control Plane
 
-### StorageClasses
+* API Server
+* Scheduler
+* Controller Manager
+* etcd
 
-1. `kubectl get storageclass`  
-   List all storage classes available in the cluster.
+### Worker Node
 
-### ConfigMaps and Secrets
+* kubelet
+* kube-proxy
+* Container Runtime
+* Pods
 
-1. `kubectl create configmap app-config --from-file=config.properties`  
-   Create a ConfigMap from a file.
-2. `kubectl create secret generic db-credentials --from-literal=username=admin --from-literal=password=admin123`  
-   Create a Secret with database credentials.
+Useful command:
 
----
-
-## **Scaling and Scheduling**
-
-### HPA and VPA
-
-1. `kubectl autoscale deployment nginx --cpu-percent=50 --min=1 --max=10 -n nginx`  
-   Enable Horizontal Pod Autoscaler (HPA).
-2. `kubectl apply -f vpa.yml`  
-   Deploy a Vertical Pod Autoscaler (VPA).
-
-### Node Affinity and Taints/Tolerations
-
-1. `kubectl taint nodes node1 key=value:NoSchedule`  
-   Apply a taint to a node.
-2. `kubectl apply -f node-affinity.yml`  
-   Define node affinity rules for pods.
-
-### Resource Quotas, Limits, Probes
-
-1. `kubectl apply -f resourcequota.yml`  
-   Set resource limits and quotas in a namespace.
-2. `kubectl describe quota my-quota -n dev`  
-   Display details of a resource quota.
+```bash
+kubectl cluster-info
+```
 
 ---
 
-## **Cluster Administration**
+# 🛠️ Cluster Setup
 
-### RBAC
+## Kind
 
-1. `kubectl apply -f role.yml`  
-   Define a Role for access control.
-2. `kubectl apply -f rolebinding.yml`  
-   Bind the Role to a user or service account.
+Create a local Kubernetes cluster using Kind:
 
-### Custom Resource Definitions (CRDs)
+```bash
+kind create cluster --name tws-cluster --config config.yml
+```
 
-1. `kubectl apply -f crd.yml`  
-   Define a Custom Resource Definition.
-2. `kubectl get crd`  
-   List all Custom Resource Definitions.
+Check clusters:
 
----
+```bash
+kind get clusters
+```
 
-## **Monitoring and Logging**
+Switch Kubernetes context:
 
-### Metrics Server
+```bash
+kubectl config use-context kind-tws-cluster
+```
 
-1. `kubectl apply -f metrics-server.yml`  
-   Deploy the metrics server.
-2. `kubectl top node`  
-   Display resource usage by nodes.
+Check cluster nodes:
 
-### Prometheus and Grafana
-
-1. `helm install prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring`  
-   Install Prometheus and Grafana for monitoring.
-2. `kubectl port-forward svc/prometheus-stack-grafana 3000:80 -n monitoring --address=0.0.0.0`  
-   Access Grafana through port forwarding.
+```bash
+kubectl get nodes
+```
 
 ---
 
-## **Advanced Features**
+# ⌨️ Kubectl Commands
 
-### Helm
+`kubectl` is the primary CLI tool for interacting with Kubernetes clusters.
 
-1. `helm create my-chart`  
-   Create a Helm chart.
-2. `helm install my-app my-chart -n my-namespace --create-namespace`  
-   Deploy an application using a Helm chart.
+### Get Resources
 
-### SideCar and Init Containers
+```bash
+kubectl get pods
+kubectl get nodes
+kubectl get deployments
+kubectl get services
+kubectl get all
+```
 
-1. `kubectl apply -f init-container.yml`  
-   Deploy a pod with an Init Container.
-2. `kubectl apply -f sidecar-container.yml`  
-   Deploy a pod with a SideCar Container.
+### Detailed Information
 
----
+```bash
+kubectl describe pod nginx
+kubectl describe deployment nginx
+kubectl describe service nginx
+```
 
-## **Security**
+### Create a Pod
 
-1. `kubectl apply -f podsecuritypolicy.yml`  
-   Define pod security standards.
-2. `kubectl apply -f secrets-encryption.yml`  
-   Configure encryption for Kubernetes Secrets.
+```bash
+kubectl run nginx --image=nginx
+```
 
----
+### Delete a Resource
 
-## **Cloud-Native Kubernetes**
+```bash
+kubectl delete pod nginx
+```
 
-### Managed Services (EKS, AKS, GKE)
+### Apply YAML
 
-1. `eksctl create cluster --name my-cluster`  
-   Create an EKS cluster using `eksctl`.
-
-### Cluster Autoscaler
-
-1. `kubectl apply -f cluster-autoscaler.yml`  
-   Deploy the Cluster Autoscaler.
-
----
-
-## **Debugging and Troubleshooting**
-
-1. `kubectl logs pod-name -n namespace`  
-   View logs for a specific pod.
-2. `kubectl describe pod pod-name -n namespace`  
-   Display detailed information about a pod.
-3. `kubectl exec -it pod-name -n namespace -- bash`  
-   Access a running container.
+```bash
+kubectl apply -f deployment.yml
+```
 
 ---
 
-## **Projects**
+# 📦 Namespaces
 
-### Resources for Projects:
+Namespaces provide logical isolation inside a Kubernetes cluster.
 
-1. **Kubestarter:** [GitHub Repository](https://github.com/LondheShubham153/kubestarter)  
-   A comprehensive starter template for Kubernetes projects.
+Create namespace:
 
-2. **CI/CD Integration:** [Wanderlust Mega Project](https://github.com/LondheShubham153/Wanderlust-Mega-Project)  
-   Learn Kubernetes CI/CD with Jenkins and ArgoCD.
+```bash
+kubectl create namespace monitoring
+```
 
-3. **Microservices:** [Full Stack ChatApp](https://github.com/LondheShubham153/full-stack_chatApp)  
-   Build and deploy a full-stack chat application.
+List namespaces:
 
-4. **Monitoring:** [K8s Voting App](https://github.com/LondheShubham153/k8s-kind-voting-app)  
-   Implement monitoring with Prometheus and Grafana for a voting app.
+```bash
+kubectl get namespaces
+```
 
+Add a label:
+
+```bash
+kubectl label namespace monitoring team=devops
+```
+
+Describe namespace:
+
+```bash
+kubectl describe namespace monitoring
+```
+
+---
+
+# 🚀 Workloads
+
+## Deployment
+
+Deploy an application:
+
+```bash
+kubectl apply -f deployment.yml
+```
+
+Scale deployment:
+
+```bash
+kubectl scale deployment nginx-deployment --replicas=3 -n nginx
+```
+
+Check deployment:
+
+```bash
+kubectl get deployments
+```
+
+---
+
+## StatefulSet
+
+Useful for stateful applications such as databases.
+
+```bash
+kubectl apply -f statefulset.yml
+```
+
+```bash
+kubectl describe statefulset mysql -n database
+```
+
+---
+
+## DaemonSet
+
+Runs a pod on each eligible node.
+
+```bash
+kubectl apply -f daemonset.yml
+```
+
+```bash
+kubectl describe daemonset fluentd -n logging
+```
+
+---
+
+## ReplicaSet
+
+Maintains a specified number of pod replicas.
+
+```bash
+kubectl apply -f replicaset.yml
+```
+
+```bash
+kubectl describe replicaset nginx-replicaset -n nginx
+```
+
+---
+
+## Jobs
+
+```bash
+kubectl apply -f job.yml
+```
+
+## CronJobs
+
+```bash
+kubectl apply -f cronjob.yml
+```
+
+---
+
+# 🌐 Networking
+
+## Services
+
+List services:
+
+```bash
+kubectl get svc -A
+```
+
+Create a service:
+
+```bash
+kubectl apply -f service.yml
+```
+
+Describe service:
+
+```bash
+kubectl describe svc nginx-service -n nginx
+```
+
+---
+
+## Ingress
+
+Ingress manages external HTTP/HTTPS access to services.
+
+```bash
+kubectl apply -f ingress.yml
+```
+
+```bash
+kubectl describe ingress nginx-ingress -n nginx
+```
+
+---
+
+## Network Policies
+
+Control communication between pods:
+
+```bash
+kubectl apply -f networkpolicy.yml
+```
+
+---
+
+# 💾 Storage
+
+## PersistentVolume
+
+```bash
+kubectl apply -f persistentVolume.yml
+```
+
+## PersistentVolumeClaim
+
+```bash
+kubectl apply -f persistentVolumeClaim.yml
+```
+
+## StorageClass
+
+```bash
+kubectl get storageclass
+```
+
+---
+
+# ⚙️ Configuration
+
+## ConfigMap
+
+Create ConfigMap from a file:
+
+```bash
+kubectl create configmap app-config \
+  --from-file=config.properties
+```
+
+View ConfigMaps:
+
+```bash
+kubectl get configmaps
+```
+
+---
+
+## Secrets
+
+Create a Secret:
+
+```bash
+kubectl create secret generic db-credentials \
+  --from-literal=username=admin \
+  --from-literal=password=admin123
+```
+
+> ⚠️ Never commit real passwords, API keys, tokens, or credentials to GitHub.
+
+---
+
+# 📈 Scaling & Scheduling
+
+## Horizontal Pod Autoscaler
+
+```bash
+kubectl autoscale deployment nginx \
+  --cpu-percent=50 \
+  --min=1 \
+  --max=10 \
+  -n nginx
+```
+
+Check HPA:
+
+```bash
+kubectl get hpa
+```
+
+---
+
+## Vertical Pod Autoscaler
+
+```bash
+kubectl apply -f vpa.yml
+```
+
+---
+
+## Taints & Tolerations
+
+Apply a taint:
+
+```bash
+kubectl taint nodes node1 key=value:NoSchedule
+```
+
+---
+
+## Node Affinity
+
+```bash
+kubectl apply -f node-affinity.yml
+```
+
+---
+
+# 📊 Resource Management
+
+## ResourceQuota
+
+```bash
+kubectl apply -f resourcequota.yml
+```
+
+Check quota:
+
+```bash
+kubectl describe quota my-quota -n dev
+```
+
+---
+
+## Probes
+
+Kubernetes supports:
+
+* ❤️ Liveness Probe
+* 🩺 Readiness Probe
+* 🚀 Startup Probe
+
+These help Kubernetes determine whether an application is healthy and ready to receive traffic.
+
+---
+
+# 🔐 RBAC & Security
+
+## Role
+
+```bash
+kubectl apply -f role.yml
+```
+
+## RoleBinding
+
+```bash
+kubectl apply -f rolebinding.yml
+```
+
+Check RBAC resources:
+
+```bash
+kubectl get roles
+kubectl get rolebindings
+```
+
+---
+
+## Custom Resource Definitions
+
+Create CRD:
+
+```bash
+kubectl apply -f crd.yml
+```
+
+List CRDs:
+
+```bash
+kubectl get crd
+```
+
+---
+
+# 📊 Monitoring & Logging
+
+## Metrics Server
+
+Deploy Metrics Server:
+
+```bash
+kubectl apply -f metrics-server.yml
+```
+
+View node resource usage:
+
+```bash
+kubectl top nodes
+```
+
+View pod resource usage:
+
+```bash
+kubectl top pods
+```
+
+---
+
+## Prometheus & Grafana
+
+Install the Prometheus + Grafana stack using Helm:
+
+```bash
+helm install prometheus-stack \
+  prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace
+```
+
+Access Grafana:
+
+```bash
+kubectl port-forward \
+  svc/prometheus-stack-grafana \
+  3000:80 \
+  -n monitoring \
+  --address=0.0.0.0
+```
+
+---
+
+# ⛵ Helm
+
+Helm is the package manager for Kubernetes.
+
+Create a chart:
+
+```bash
+helm create my-chart
+```
+
+Install a chart:
+
+```bash
+helm install my-app my-chart \
+  -n my-namespace \
+  --create-namespace
+```
+
+List Helm releases:
+
+```bash
+helm list -A
+```
+
+Upgrade:
+
+```bash
+helm upgrade my-app my-chart
+```
+
+Uninstall:
+
+```bash
+helm uninstall my-app
+```
+
+---
+
+# 🔥 Advanced Kubernetes
+
+## Init Containers
+
+```bash
+kubectl apply -f init-container.yml
+```
+
+Init Containers run before the application's main containers.
+
+---
+
+## Sidecar Containers
+
+```bash
+kubectl apply -f sidecar-container.yml
+```
+
+Sidecar containers run alongside the main application container to provide supporting functionality such as logging, proxying, or monitoring.
+
+---
+
+# ☁️ Cloud-Native Kubernetes
+
+Kubernetes is available through managed cloud services such as:
+
+* ☁️ AWS EKS
+* ☁️ Azure AKS
+* ☁️ Google GKE
+
+### AWS EKS
+
+Create an EKS cluster:
+
+```bash
+eksctl create cluster --name my-cluster
+```
+
+---
+
+## Cluster Autoscaler
+
+```bash
+kubectl apply -f cluster-autoscaler.yml
+```
+
+---
+
+# 🐛 Debugging & Troubleshooting
+
+Check pod status:
+
+```bash
+kubectl get pods
+```
+
+Detailed pod information:
+
+```bash
+kubectl describe pod pod-name -n namespace
+```
+
+View logs:
+
+```bash
+kubectl logs pod-name -n namespace
+```
+
+Follow logs:
+
+```bash
+kubectl logs -f pod-name -n namespace
+```
+
+Execute commands inside a container:
+
+```bash
+kubectl exec -it pod-name -n namespace -- bash
+```
+
+Check events:
+
+```bash
+kubectl get events -A
+```
+
+---
+
+# 🧪 Practical Projects
+
+This repository is focused on **hands-on Kubernetes learning**.
+
+## 🗳️ Kubernetes Voting App
+
+A Kubernetes-based voting application demonstrating:
+
+* Pods
+* Deployments
+* Services
+* ConfigMaps
+* Kubernetes networking
+* Monitoring
+
+---
+
+## 💬 Full Stack Chat Application
+
+Deploy a full-stack application using Kubernetes and modern DevOps practices.
+
+---
+
+## 🔄 CI/CD with Kubernetes
+
+Practice Kubernetes deployment with CI/CD technologies such as:
+
+* Jenkins
+* GitHub Actions
+* ArgoCD
+
+---
+
+# 🗺️ Learning Path
+
+Recommended order for learning Kubernetes:
+
+```text
+Linux
+  ↓
+Docker
+  ↓
+Kubernetes Fundamentals
+  ↓
+Pods
+  ↓
+Deployments
+  ↓
+Services
+  ↓
+ConfigMaps & Secrets
+  ↓
+Storage
+  ↓
+Ingress
+  ↓
+Probes & Resources
+  ↓
+RBAC
+  ↓
+Helm
+  ↓
+Monitoring
+  ↓
+CI/CD
+  ↓
+AWS EKS
+  ↓
+Advanced Kubernetes
+```
+
+---
+
+# 🎯 Goal
+
+The goal of this repository is to build a **strong practical foundation in Kubernetes** and understand how Kubernetes is used in real-world DevOps and cloud-native environments.
+
+> **Learn → Practice → Deploy → Monitor → Troubleshoot → Automate**
+
+---
+
+# 📚 Resources
+
+* ☸️ Kubernetes Documentation — https://kubernetes.io/docs/
+* 🐳 Docker Documentation — https://docs.docker.com/
+* ⛵ Helm Documentation — https://helm.sh/docs/
+* ☁️ AWS EKS — https://aws.amazon.com/eks/
+* 📈 Prometheus — https://prometheus.io/
+* 📊 Grafana — https://grafana.com/
+
+---
+
+# 👨‍💻 Author
+
+**Muhammad Hussnain Ashiq**
+
+DevOps & Cloud Learning Journey 🚀
+
+This repository is part of my practical journey toward becoming a **DevOps / Cloud Engineer**.
+
+---
+
+## ⭐ Support
+
+If this repository helps you learn Kubernetes, consider giving it a ⭐ on GitHub.
+
+**Happy Learning & Keep Building! 🚀☸️**
